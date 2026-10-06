@@ -40,11 +40,33 @@ function render() {
   });
 }
 
+function updateCount() {
+  if (notes.length === 0) {
+    noteCount.textContent = "You have no notes yet.";
+  } else if (notes.length === 1) {
+    noteCount.textContent = "You have 1 note.";
+  } else {
+    noteCount.textContent = `You have ${notes.length} notes.`;
+  }
+}
+
 function addNote(event) {
   event.preventDefault();
 
   const text = noteInput.value.trim();
   const category = noteCategory.value;
+
+  if (text.length === 0) {
+    errorMessage.textContent = "Please type a note first.";
+    return;
+  }
+
+  if (text.length > 200) {
+    errorMessage.textContent = "Notes must be 200 characters or fewer.";
+    return;
+  }
+
+  errorMessage.textContent = "";
 
   const newNote = {
     id: Date.now().toString(),
@@ -55,6 +77,7 @@ function addNote(event) {
 
   notes.push(newNote);
   render();
+  updateCount();
   noteInput.value = "";
 }
 
@@ -68,6 +91,8 @@ notesList.addEventListener("click", (event) => {
   const id = event.target.dataset.id;
   notes = notes.filter((note) => note.id !== id);
   render();
+  updateCount();
 });
 
 render();
+updateCount();
